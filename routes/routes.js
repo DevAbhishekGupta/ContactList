@@ -1,0 +1,51 @@
+const express = require('express');
+const router = express.Router();
+const Contact = require('../models/contacts');
+
+//Reading data
+router.get('/contacts', function(req, res, next)
+{
+    //res.send('Retrieving the contact list');
+    Contact.find(function(err, contacts){
+        res.json(contacts);
+    });
+});
+
+//adding or inserting data
+router.post('/contact',function(req,res,next)
+{
+    let newContact = new Contact({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        contact_no: req.body.contact_no
+    });
+
+    newContact.save(function(err,contact)
+    {
+        if(err)
+        {
+            res.json({msg: 'Failed to add contact'});
+        }
+        else
+        {
+            res.json({msg: 'Contact added successfully'});
+        }
+    });
+});
+
+//deleting contact
+router.delete('/contact/:id', function(req,res,next)
+{
+    Contact.remove({_id: req.params.id}, function(err, result){
+        if(err)
+        {
+            res.json(err);
+        }
+        else
+        {
+            res.json(result);
+        }
+    });
+});
+
+module.exports = router;
